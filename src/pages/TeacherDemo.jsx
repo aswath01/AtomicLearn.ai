@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Video, FileText, CheckCircle, BrainCircuit, PlayCircle, MousePointer2, ArrowLeft } from 'lucide-react';
+import { Video, FileText, CheckCircle, BrainCircuit, PlayCircle, Plus, Loader2, Download, ArrowLeft, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const SidebarItem = ({ icon: Icon, label, active, id, onClick }) => (
@@ -31,15 +31,23 @@ const SidebarItem = ({ icon: Icon, label, active, id, onClick }) => (
 const TeacherDemo = () => {
     const { t } = useLanguage();
     const [activeTab, setActiveTab] = useState('video');
+    const [isGenerating, setIsGenerating] = useState(false);
+    const [showResult, setShowResult] = useState(false);
+    const [inputValue, setInputValue] = useState("");
 
-    // Auto-fake cursor movement when tab changes (optional polish)
-    const [cursorTarget, setCursorTarget] = useState({ top: 110, left: 150 });
+    const handleGenerate = () => {
+        setIsGenerating(true);
+        setShowResult(false);
+        setTimeout(() => {
+            setIsGenerating(false);
+            setShowResult(true);
+        }, 2000);
+    };
 
-    const handleTabClick = (tab) => {
+    const resetView = (tab) => {
         setActiveTab(tab);
-        // Update cursor visual position based on tab
-        const yPos = tab === 'video' ? 110 : tab === 'notes' ? 170 : tab === 'quiz' ? 230 : 290;
-        setCursorTarget({ top: yPos, left: 150 });
+        setShowResult(false);
+        setInputValue("");
     };
 
     return (
@@ -63,26 +71,6 @@ const TeacherDemo = () => {
                     animate={{ opacity: 1, scale: 1 }}
                     className="teacher-demo-window"
                 >
-                    {/* Simulated Cursor Layer - Now responds to user clicks */}
-                    <motion.div
-                        animate={{
-                            top: cursorTarget.top,
-                            left: cursorTarget.left,
-                        }}
-                        transition={{
-                            type: "spring", stiffness: 100, damping: 20
-                        }}
-                        style={{
-                            position: 'absolute',
-                            zIndex: 50,
-                            pointerEvents: 'none',
-                            filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.2))',
-                            display: 'block' // Keep visible as a "guide" or remove if user finds annoying
-                        }}
-                    >
-                        <MousePointer2 size={32} fill="black" color="white" />
-                    </motion.div>
-
                     {/* Sidebar */}
                     <div className="teacher-sidebar">
                         <div className="sidebar-logo" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '2rem', paddingLeft: '0.5rem' }}>
@@ -91,9 +79,9 @@ const TeacherDemo = () => {
                         </div>
 
                         <div className="sidebar-items" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                            <SidebarItem icon={Video} label={t('tabVideo')} active={activeTab === 'video'} id="video" onClick={handleTabClick} />
-                            <SidebarItem icon={FileText} label={t('tabNotes')} active={activeTab === 'notes'} id="notes" onClick={handleTabClick} />
-                            <SidebarItem icon={CheckCircle} label={t('tabQuiz')} active={activeTab === 'quiz'} id="quiz" onClick={handleTabClick} />
+                            <SidebarItem icon={Video} label={t('tabVideo')} active={activeTab === 'video'} id="video" onClick={resetView} />
+                            <SidebarItem icon={FileText} label={t('tabNotes')} active={activeTab === 'notes'} id="notes" onClick={resetView} />
+                            <SidebarItem icon={CheckCircle} label={t('tabQuiz')} active={activeTab === 'quiz'} id="quiz" onClick={resetView} />
                         </div>
                     </div>
 
@@ -107,87 +95,153 @@ const TeacherDemo = () => {
                     }}>
                         {/* Header */}
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-                            <h3 style={{ fontSize: '1.5rem', margin: 0 }}>
+                            <h3 style={{ fontSize: '1.5rem', margin: 0, fontWeight: 700, color: '#111827' }}>
                                 {activeTab === 'video' && t('tabVideo')}
                                 {activeTab === 'notes' && t('tabNotes')}
                                 {activeTab === 'quiz' && t('tabQuiz')}
                             </h3>
-                            <div style={{ display: 'flex', gap: '0.75rem' }}>
-                                <div style={{ padding: '0.5rem 1rem', fontSize: '0.875rem', background: '#F3F4F6', color: '#374151', borderRadius: '9999px' }}>{t('drafts')}</div>
-                                <div style={{ padding: '0.5rem 1rem', fontSize: '0.875rem', background: '#4F46E5', color: 'white', borderRadius: '9999px' }}>
-                                    {t('newProject')}
-                                </div>
-                            </div>
+                            <button
+                                onClick={() => { setShowResult(false); setInputValue(""); }}
+                                style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', fontSize: '0.875rem', background: '#4F46E5', color: 'white', borderRadius: '9999px', border: 'none', cursor: 'pointer', fontWeight: 500 }}
+                            >
+                                <Plus size={16} /> {t('newProject')}
+                            </button>
                         </div>
 
-                        {/* Dynamic Content */}
-                        <AnimatePresence mode="wait">
+                        {/* Input State */}
+                        {!showResult && !isGenerating && (
                             <motion.div
-                                key={activeTab}
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -10 }}
-                                transition={{ duration: 0.3 }}
-                                style={{ flex: 1, display: 'flex', flexDirection: 'column' }}
+                                style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
                             >
-                                {/* Prompt Input Area */}
-                                <div style={{ marginBottom: '2rem' }}>
-                                    <div style={{ display: 'flex', gap: '1rem' }}>
-                                        <div style={{ flex: 1, padding: '0.75rem 1rem', borderRadius: '0.5rem', border: '1px solid #D1D5DB', background: '#F9FAFB', color: '#6B7280' }}>
-                                            {activeTab === 'video' ? "Explain Photosynthesis..." :
-                                                activeTab === 'notes' ? "Summarize Newton's Laws..." :
-                                                    "Quiz on Periodic Table..."}
-                                        </div>
+                                <div style={{ background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: '1rem', padding: '2rem', textAlign: 'center' }}>
+                                    <div style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem', color: '#374151' }}>
+                                        {activeTab === 'video' ? "What topic do you want a video for?" :
+                                            activeTab === 'notes' ? "What lesson do you need notes for?" :
+                                                "Create a quiz about..."}
                                     </div>
-                                </div>
-
-                                {/* Results Area */}
-                                <div style={{ flex: 1, background: '#F9FAFB', border: '1px dashed #D1D5DB', borderRadius: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                                    <div style={{ width: '100%', height: '100%', padding: '2rem', display: 'flex', flexDirection: 'column' }}>
-                                        {/* Simulated Result Content */}
-                                        {activeTab === 'video' && (
-                                            <motion.div
-                                                initial={{ scale: 0.9 }} animate={{ scale: 1 }}
-                                                style={{ width: '100%', height: '100%', background: '#1F2937', borderRadius: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}
+                                    <div style={{ display: 'flex', gap: '1rem', maxWidth: '600px', margin: '0 auto' }}>
+                                        <input
+                                            type="text"
+                                            placeholder={activeTab === 'video' ? "e.g., Photosynthesis, Newton's Laws" : activeTab === 'notes' ? "e.g., The French Revolution" : "e.g., Periodic Table"}
+                                            className="search-input"
+                                            value={inputValue}
+                                            onChange={(e) => setInputValue(e.target.value)}
+                                            style={{ flex: 1, padding: '1rem', borderRadius: '0.75rem', border: '1px solid #D1D5DB', fontSize: '1rem', outline: 'none' }}
+                                        />
+                                        <button
+                                            onClick={handleGenerate}
+                                            disabled={!inputValue}
+                                            style={{
+                                                padding: '0 2rem',
+                                                background: inputValue ? '#4F46E5' : '#E5E7EB',
+                                                color: inputValue ? 'white' : '#9CA3AF',
+                                                border: 'none',
+                                                borderRadius: '0.75rem',
+                                                fontSize: '1rem',
+                                                fontWeight: 600,
+                                                cursor: inputValue ? 'pointer' : 'not-allowed',
+                                                transition: 'background 0.2s'
+                                            }}
+                                        >
+                                            Generate
+                                        </button>
+                                    </div>
+                                    <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                                        {["Photosynthesis", "World War II", "Algebra Basics"].map(tag => (
+                                            <button
+                                                key={tag}
+                                                onClick={() => setInputValue(tag)}
+                                                style={{ padding: '0.5rem 1rem', background: 'white', border: '1px solid #E5E7EB', borderRadius: '9999px', fontSize: '0.9rem', color: '#6B7280', cursor: 'pointer' }}
                                             >
-                                                <PlayCircle size={64} color="white" style={{ opacity: 0.9, marginBottom: '1rem' }} />
-                                                <div style={{ color: 'white', fontWeight: 600 }}>{t('generating')}</div>
-                                                <div style={{ width: '200px', height: '4px', background: '#374151', marginTop: '1rem', borderRadius: '2px', overflow: 'hidden' }}>
-                                                    <motion.div animate={{ width: ['0%', '100%'] }} transition={{ duration: 3 }} style={{ height: '100%', background: '#4F46E5' }} />
-                                                </div>
-                                            </motion.div>
-                                        )}
-
-                                        {activeTab === 'notes' && (
-                                            <motion.div
-                                                initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
-                                                style={{ width: '100%', height: '100%', background: 'white', border: '1px solid #E5E7EB', borderRadius: '0.5rem', padding: '2rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}
-                                            >
-                                                <h4 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Newton's Laws Summary</h4>
-                                                <div style={{ marginBottom: '0.5rem', fontWeight: 600 }}>1. Law of Inertia</div>
-                                                <p style={{ fontSize: '0.9rem', color: '#6B7280', marginBottom: '1rem' }}>An object at rest stays at rest...</p>
-                                                <div style={{ marginBottom: '0.5rem', fontWeight: 600 }}>2. F = ma</div>
-                                            </motion.div>
-                                        )}
-
-                                        {activeTab === 'quiz' && (
-                                            <motion.div
-                                                initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                                                style={{ display: 'grid', gap: '1rem' }}
-                                            >
-                                                <div style={{ padding: '1rem', background: 'white', border: '1px solid #10B981', borderRadius: '0.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                    <span>1. H is the symbol for...?</span>
-                                                    <CheckCircle size={20} color="#10B981" />
-                                                </div>
-                                                <div style={{ padding: '1rem', background: 'white', border: '1px solid #E5E7EB', borderRadius: '0.5rem' }}>
-                                                    <span>2. O stands for...?</span>
-                                                </div>
-                                            </motion.div>
-                                        )}
+                                                {tag}
+                                            </button>
+                                        ))}
                                     </div>
                                 </div>
                             </motion.div>
-                        </AnimatePresence>
+                        )}
+
+                        {/* Loading State */}
+                        {isGenerating && (
+                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#6B7280' }}>
+                                <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}>
+                                    <Loader2 size={48} color="#4F46E5" />
+                                </motion.div>
+                                <p style={{ marginTop: '1.5rem', fontSize: '1.1rem', fontWeight: 500 }}>AI is creating your {activeTab}...</p>
+                            </div>
+                        )}
+
+                        {/* Result State */}
+                        {showResult && (
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
+                                {activeTab === 'video' && (
+                                    <div style={{ flex: 1, background: 'black', borderRadius: '1rem', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                                        <img src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=2600&auto=format&fit=crop" alt="Video thumbnail" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.6 }} />
+                                        <div style={{ position: 'absolute', zIndex: 10 }}>
+                                            <PlayCircle size={80} color="white" fill="rgba(255,255,255,0.2)" />
+                                        </div>
+                                        <div style={{ position: 'absolute', bottom: '1.5rem', left: '1.5rem', color: 'white' }}>
+                                            <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>{inputValue || "Educational Video"}</h3>
+                                            <p style={{ opacity: 0.8 }}>Generated by Atomic AI • 02:45</p>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {activeTab === 'notes' && (
+                                    <div style={{ flex: 1, background: 'white', border: '1px solid #E5E7EB', borderRadius: '1rem', padding: '2.5rem', overflowY: 'auto' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2rem' }}>
+                                            <div>
+                                                <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem', color: '#111827' }}>{inputValue || "Lesson Notes"}</h1>
+                                                <p style={{ color: '#6B7280' }}>Grade 10 • Science • Generated just now</p>
+                                            </div>
+                                            <button style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', border: '1px solid #D1D5DB', borderRadius: '0.5rem', backgroundColor: 'white', cursor: 'pointer' }}>
+                                                <Download size={18} /> Export PDF
+                                            </button>
+                                        </div>
+                                        <div style={{ lineHeight: 1.8, color: '#374151' }}>
+                                            <h3 style={{ color: '#111827', marginTop: '1.5rem' }}>1. Introduction</h3>
+                                            <p>This section introduces the core concepts of {inputValue}, explaining its significance in modern science...</p>
+                                            <h3 style={{ color: '#111827', marginTop: '1.5rem' }}>2. Key Terminology</h3>
+                                            <ul style={{ paddingLeft: '1.5rem', marginBottom: '1rem' }}>
+                                                <li><strong>Term A:</strong> Definition and context.</li>
+                                                <li><strong>Term B:</strong> Real-world capabilities.</li>
+                                            </ul>
+                                            <h3 style={{ color: '#111827', marginTop: '1.5rem' }}>3. Summary</h3>
+                                            <p>In conclusion, understanding {inputValue} is crucial for grasping more complex topics in the curriculum.</p>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {activeTab === 'quiz' && (
+                                    <div style={{ flex: 1, padding: '1rem', overflowY: 'auto' }}>
+                                        <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <h2 style={{ fontSize: '1.5rem', fontWeight: 700 }}>Quiz: {inputValue}</h2>
+                                            <button style={{ color: '#4F46E5', background: 'transparent', border: 'none', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                                <RefreshCw size={16} /> Regenerate
+                                            </button>
+                                        </div>
+                                        {[1, 2, 3].map((q) => (
+                                            <div key={q} style={{ background: 'white', padding: '1.5rem', borderRadius: '1rem', border: '1px solid #E5E7EB', marginBottom: '1.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+                                                <h4 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: '#1F2937' }}>{q}. What is a primary characteristic of {inputValue}?</h4>
+                                                <div style={{ display: 'grid', gap: '0.75rem' }}>
+                                                    {['Option A', 'Option B', 'Option C', 'Option D'].map((opt, i) => (
+                                                        <div key={i} style={{ padding: '0.75rem 1rem', border: '1px solid #E5E7EB', borderRadius: '0.5rem', cursor: 'pointer', transition: 'background 0.2s', display: 'flex', alignItems: 'center', gap: '0.75rem' }}
+                                                            onMouseEnter={(e) => e.currentTarget.style.background = '#F9FAFB'}
+                                                            onMouseLeave={(e) => e.currentTarget.style.background = 'white'}
+                                                        >
+                                                            <div style={{ width: 16, height: 16, border: '1px solid #D1D5DB', borderRadius: '50%' }}></div>
+                                                            {opt}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </motion.div>
+                        )}
                     </div>
                 </motion.div>
             </div>
