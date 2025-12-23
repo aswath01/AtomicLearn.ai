@@ -5,7 +5,6 @@ import HeroSection from './components/HeroSection.jsx';
 import TeacherFeatures from './components/TeacherFeatures.jsx';
 import StudentFeatures from './components/StudentFeatures.jsx';
 
-import HowItWorks from './components/HowItWorks.jsx';
 import WhyAtomicLearn from './components/WhyAtomicLearn.jsx';
 import Footer from './components/Footer.jsx';
 
@@ -18,7 +17,6 @@ function App() {
           <HeroSection />
           <TeacherFeatures />
           <StudentFeatures />
-          <HowItWorks />
           <WhyAtomicLearn />
         </main>
         <Footer />
