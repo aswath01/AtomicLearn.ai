@@ -188,3 +188,47 @@ a {
     gap: 2rem;
   }
 }
+
+/* Hero Section Responsiveness */
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+.hero-visuals {
+  position: relative;
+  height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    text-align: center;
+    /* Center text on mobile for better look */
+  }
+
+  .hero-grid h1 {
+    font-size: 2.5rem !important;
+    /* Force smaller font on mobile if clamp isn't enough */
+  }
+
+  .hero-grid p {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-grid .btn-container {
+    justify-content: center;
+  }
+
+  .hero-visuals {
+    height: 350px;
+    margin-top: 2rem;
+  }
+}

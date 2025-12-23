@@ -36,7 +36,7 @@ const HeroSection = () => {
 
     return (
         <section id="home" style={{ padding: '6rem 1rem 8rem', position: 'relative', overflow: 'hidden' }}>
-            <div className="container" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem', alignItems: 'center' }}>
+            <div className="container hero-grid">
 
                 {/* Text Content */}
                 <motion.div
@@ -82,7 +82,7 @@ const HeroSection = () => {
                         {t('heroDescription')}
                     </p>
 
-                    <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                    <div className="btn-container" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                         <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
@@ -103,7 +103,7 @@ const HeroSection = () => {
                 </motion.div>
 
                 {/* Visuals */}
-                <div style={{ position: 'relative', height: '500px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div className="hero-visuals">
                     {/* Blob Background */}
                     <motion.div
                         animate={{ scale: [1, 1.1, 1], rotate: [0, 5, 0] }}
