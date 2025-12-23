@@ -232,3 +232,84 @@ a {
     margin-top: 2rem;
   }
 }
+
+/* How It Works Responsiveness */
+.steps-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  gap: 4rem;
+  flex-wrap: wrap;
+}
+
+.step-line {
+  position: absolute;
+  top: 40px;
+  left: 20%;
+  right: 20%;
+  height: 2px;
+  background: #E5E7EB;
+  z-index: 0;
+}
+
+@media (max-width: 768px) {
+  .step-line {
+    display: none;
+  }
+
+  .steps-container {
+    gap: 2rem;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+/* Teacher Demo Responsiveness */
+.teacher-demo-window {
+  background: white;
+  border-radius: 1.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+  border: 1px solid #E5E7EB;
+  overflow: hidden;
+  display: flex;
+  width: 100%;
+  max-width: 1200px;
+  height: 700px;
+  position: relative;
+}
+
+.teacher-sidebar {
+  background: #F9FAFB;
+  border-right: 1px solid #E5E7EB;
+  padding: 1.5rem;
+  position: relative;
+  width: 280px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .teacher-demo-window {
+    flex-direction: column;
+    height: auto;
+    min-height: 80vh;
+  }
+
+  .teacher-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #E5E7EB;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .teacher-sidebar .sidebar-logo {
+    margin-bottom: 0 !important;
+  }
+
+  .teacher-sidebar .sidebar-items {
+    display: none;
+    /* Hide standard items on mobile, maybe show simplified or rely on auto-loop which runs anyway */
+  }
+}

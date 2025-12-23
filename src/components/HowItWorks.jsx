@@ -35,18 +35,9 @@ const HowItWorks = () => {
                     <p style={{ fontSize: '1.1rem', color: '#6B7280' }}>Transforming education in 3 simple steps</p>
                 </div>
 
-                <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', gap: '4rem', flexWrap: 'wrap' }}>
+                <div className="steps-container">
                     {/* Connecting Line */}
-                    <div style={{
-                        position: 'absolute',
-                        top: '40px',
-                        left: '20%',
-                        right: '20%',
-                        height: '2px',
-                        background: '#E5E7EB',
-                        zIndex: 0,
-                        display: 'flex' // Hide on mobile logic needed if using display flex on parent
-                    }} className="step-line" />
+                    <div className="step-line" />
 
                     {steps.map((step, index) => (
                         <motion.div

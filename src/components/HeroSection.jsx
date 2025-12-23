@@ -3,6 +3,7 @@ import React from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { motion } from 'framer-motion';
 import { ArrowRight, PlayCircle, Sparkles, Pencil, Book } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const FloatingIcon = ({ children, delay, x, y, rotate }) => (
     <motion.div
@@ -83,22 +84,26 @@ const HeroSection = () => {
                     </p>
 
                     <div className="btn-container" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="btn btn-primary"
-                            style={{ fontSize: '1.125rem' }}
-                        >
-                            {t('forTeachers')} <ArrowRight size={20} style={{ marginLeft: '0.5rem' }} />
-                        </motion.button>
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="btn btn-secondary"
-                            style={{ fontSize: '1.125rem' }}
-                        >
-                            {t('forStudents')} <PlayCircle size={20} style={{ marginLeft: '0.5rem' }} />
-                        </motion.button>
+                        <Link to="/teacher-demo" style={{ textDecoration: 'none' }}>
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="btn btn-primary"
+                                style={{ fontSize: '1.125rem', display: 'flex', alignItems: 'center' }}
+                            >
+                                {t('forTeachers')} <ArrowRight size={20} style={{ marginLeft: '0.5rem' }} />
+                            </motion.button>
+                        </Link>
+                        <Link to="/student-demo" style={{ textDecoration: 'none' }}>
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="btn btn-secondary"
+                                style={{ fontSize: '1.125rem', display: 'flex', alignItems: 'center' }}
+                            >
+                                {t('forStudents')} <PlayCircle size={20} style={{ marginLeft: '0.5rem' }} />
+                            </motion.button>
+                        </Link>
                     </div>
                 </motion.div>
 
