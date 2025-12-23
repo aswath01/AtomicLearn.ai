@@ -1,13 +1,13 @@
 import React from 'react';
-import { LanguageProvider } from './context/LanguageContext';
-import Navbar from './components/Navbar';
-import HeroSection from './components/HeroSection';
-import TeacherFeatures from './components/TeacherFeatures';
-import StudentFeatures from './components/StudentFeatures';
+import { LanguageProvider } from './context/LanguageContext.jsx';
+import Navbar from './components/Navbar.jsx';
+import HeroSection from './components/HeroSection.jsx';
+import TeacherFeatures from './components/TeacherFeatures.jsx';
+import StudentFeatures from './components/StudentFeatures.jsx';
 
-import HowItWorks from './components/HowItWorks';
-import WhyAtomicLearn from './components/WhyAtomicLearn';
-import Footer from './components/Footer';
+import HowItWorks from './components/HowItWorks.jsx';
+import WhyAtomicLearn from './components/WhyAtomicLearn.jsx';
+import Footer from './components/Footer.jsx';
 
 function App() {
   return (
